@@ -36,20 +36,20 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 	for(int y = 0; y < height-1; y++){
 		for(int x = 0; x < width-1; x++){
 			
-			int idx1 = y*width+x; 
-			int idx2 = y*width+(x+1); 
-			int idx3 = (y+1)*width+x; 
-			int idx4 = (y+1)*width+(x+1); 
-			Vector4f point0 = vertices[idx1].position;
-			Vector4f point1 = vertices[idx2].position;
-			Vector4f point5 = vertices[idx3].position;
-			Vector4f point6 = vertices[idx4].position;
+			int idx0 = y*width+x; 
+			int idx1 = y*width+(x+1); 
+			int idx5 = (y+1)*width+x; 
+			int idx6 = (y+1)*width+(x+1); 
+			Vector4f point0 = vertices[idx0].position;
+			Vector4f point1 = vertices[idx1].position;
+			Vector4f point5 = vertices[idx5].position;
+			Vector4f point6 = vertices[idx6].position;
 			if(point0(0) != MINF && point1(0) != MINF && point5(0) != MINF ){
-				if((point0-point1).norm()>edgeThreshold && (point0-point5).norm()>edgeThreshold){
+				if((point5-point1).norm()<edgeThreshold && (point0-point1).norm()<edgeThreshold && (point0-point5).norm()<edgeThreshold){
 				nFaces++;
 				}}
 			if(point5(0) != MINF && point6(0) != MINF && point1(0) != MINF ){
-				if((point5-point6).norm()>edgeThreshold && (point1-point6).norm()>edgeThreshold){
+				if((point1-point5).norm()<edgeThreshold && (point5-point6).norm()<edgeThreshold && (point1-point6).norm()<edgeThreshold){
 				nFaces++;
 			}}
 		}
@@ -73,8 +73,25 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 
 	for(int i = 0; i < width*height; i++){
 		if(vertices[i].position(0) != MINF){
-			outFile << vertices[i].position(0) << " " << vertices[i].position(1) << " " << vertices[i].position(2) << " " << static_cast<float>(vertices[i].color(0)) << " " <<  static_cast<float>(vertices[i].color(1)) << " " <<  static_cast<float>(vertices[i].color(2)) << " " << static_cast<float>(vertices[i].color(3)) << std::endl;
+			outFile << vertices[i].position[0] << 
+			" " << vertices[i].position[1] <<
+			" " << vertices[i].position[2] << 
+			" " << (int)(vertices[i].color[0]) << 
+			" " <<  (int)(vertices[i].color[1]) << 
+			" " <<  (int)(vertices[i].color[2]) << 
+			" " << (int)(vertices[i].color[3]) << 
+			std::endl;
 			std::cout <<  vertices[i].position(0) << " " << vertices[i].position(1) << " " << vertices[i].position(2) << " " << static_cast<float>(vertices[i].color(0)) << " " <<  static_cast<float>(vertices[i].color(1)) << " " <<  static_cast<float>(vertices[i].color(2)) << std::endl;
+		}
+		else{
+			outFile << 0 << 
+			" " << 0 <<
+			" " << 0 << 
+			" " << (int)(vertices[i].color[0]) << 
+			" " <<  (int)(vertices[i].color[1]) << 
+			" " <<  (int)(vertices[i].color[2]) << 
+			" " << (int)(vertices[i].color[3]) << 
+			std::endl;
 		}
 	}
 
@@ -82,30 +99,25 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 	outFile << "# list of faces" << std::endl;
 
 	outFile << "# nVerticesPerFace idx0 idx1 idx2 ..." << std::endl;
-
 	for(int y = 0; y < height-1; y++){
 		for(int x = 0; x < width-1; x++){
-			int idx1 = y*width+x; 
-			int idx2 = y*width+(x+1); 
-			int idx3 = (y+1)*width+x; 
-			int idx4 = (y+1)*width+(x+1); 
-			Vector4f point0 = vertices[idx1].position;
-			Vector4f point1 = vertices[idx2].position;
-			Vector4f point5 = vertices[idx3].position;
-			Vector4f point6 = vertices[idx4].position;
+			
+			int idx0 = y*width+x; 
+			int idx1 = y*width+(x+1); 
+			int idx5 = (y+1)*width+x; 
+			int idx6 = (y+1)*width+(x+1); 
+			Vector4f point0 = vertices[idx0].position;
+			Vector4f point1 = vertices[idx1].position;
+			Vector4f point5 = vertices[idx5].position;
+			Vector4f point6 = vertices[idx6].position;
 			if(point0(0) != MINF && point1(0) != MINF && point5(0) != MINF ){
-				if((point0-point1).norm()>edgeThreshold && (point0-point5).norm()>edgeThreshold){
-				outFile << idx1 << " " << idx3 << " " << idx2<< std::endl; 
-				// std::cout << idx1 << " " << idx3 << " " << idx2<< std::endl; 
-				}
-			}
+				if((point5-point1).norm()<edgeThreshold && (point0-point1).norm()<edgeThreshold && (point0-point5).norm()<edgeThreshold){
+				outFile << std::to_string(idx1) << " " << std::to_string(idx5) << " " << std::to_string(idx1)<< std::endl; 
+				}}
 			if(point5(0) != MINF && point6(0) != MINF && point1(0) != MINF ){
-
-				if((point5-point6).norm()>edgeThreshold && (point1-point6).norm()>edgeThreshold){
-				outFile << idx3 << " " << idx4 << " " << idx2 << std::endl; 
-				// std::cout << idx3 << " " << idx4 << " " << idx2 << std::endl; 
-				}
-			}
+				if((point1-point5).norm()<edgeThreshold && (point5-point6).norm()<edgeThreshold && (point1-point6).norm()<edgeThreshold){
+				outFile << std::to_string(idx5) << " " <<std::to_string(idx1) << " " <<std::to_string(idx6) << std::endl; 
+			}}
 		}
 	}
 
