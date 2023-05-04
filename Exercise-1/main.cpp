@@ -72,23 +72,9 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 	outFile << "# X Y Z R G B A" << std::endl;
 
 	for(int i = 0; i < width*height; i++){
-		if (vertices[i].position[0] != MINF && vertices[i].position[1] != MINF && vertices[i].position[2] != MINF){
-			outFile << vertices[i].position[0] 
-					<< " " << vertices[i].position[1] 
-					<< " " << vertices[i].position[2] 
-					<< " " << (int)vertices[i].color[0]
-					<< " " << (int)vertices[i].color[1] 
-					<< " " << (int)vertices[i].color[2]
-					<< " " << (int)vertices[i].color[3]
-					<< std::endl;
-					}
-		else{
-			outFile << 0.0 << " " << 0.0 << " "
-					<< 0.0 << " " << (int)vertices[i].color[0]
-					<< " " << (int)vertices[i].color[1] 
-					<< " " << (int)vertices[i].color[2]
-					<< " " << (int)vertices[i].color[3]
-					<< std::endl;	
+		if(vertices[i].position(0) != MINF){
+			outFile << vertices[i].position(0) << " " << vertices[i].position(1) << " " << vertices[i].position(2) << " " << static_cast<float>(vertices[i].color(0)) << " " <<  static_cast<float>(vertices[i].color(1)) << " " <<  static_cast<float>(vertices[i].color(2)) << " " << static_cast<float>(vertices[i].color(3)) << std::endl;
+			std::cout <<  vertices[i].position(0) << " " << vertices[i].position(1) << " " << vertices[i].position(2) << " " << static_cast<float>(vertices[i].color(0)) << " " <<  static_cast<float>(vertices[i].color(1)) << " " <<  static_cast<float>(vertices[i].color(2)) << std::endl;
 		}
 	}
 
