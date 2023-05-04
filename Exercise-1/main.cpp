@@ -44,14 +44,12 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 			Vector4f point1 = vertices[idx1].position;
 			Vector4f point5 = vertices[idx5].position;
 			Vector4f point6 = vertices[idx6].position;
-			if(point0(0) != MINF && point1(0) != MINF && point5(0) != MINF ){
 				if((point5-point1).norm()<edgeThreshold && (point0-point1).norm()<edgeThreshold && (point0-point5).norm()<edgeThreshold){
 				nFaces++;
-				}}
-			if(point5(0) != MINF && point6(0) != MINF && point1(0) != MINF ){
+				}
 				if((point1-point5).norm()<edgeThreshold && (point5-point6).norm()<edgeThreshold && (point1-point6).norm()<edgeThreshold){
 				nFaces++;
-			}}
+			}
 		}
 	}
 
@@ -81,7 +79,7 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 			" " <<  (int)(vertices[i].color[2]) << 
 			" " << (int)(vertices[i].color[3]) << 
 			std::endl;
-			std::cout <<  vertices[i].position(0) << " " << vertices[i].position(1) << " " << vertices[i].position(2) << " " << static_cast<float>(vertices[i].color(0)) << " " <<  static_cast<float>(vertices[i].color(1)) << " " <<  static_cast<float>(vertices[i].color(2)) << std::endl;
+			// std::cout <<  vertices[i].position(0) << " " << vertices[i].position(1) << " " << vertices[i].position(2) << " " << static_cast<float>(vertices[i].color(0)) << " " <<  static_cast<float>(vertices[i].color(1)) << " " <<  static_cast<float>(vertices[i].color(2)) << std::endl;
 		}
 		else{
 			outFile << 0 << 
@@ -110,17 +108,14 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 			Vector4f point1 = vertices[idx1].position;
 			Vector4f point5 = vertices[idx5].position;
 			Vector4f point6 = vertices[idx6].position;
-			if(point0(0) != MINF && point1(0) != MINF && point5(0) != MINF ){
 				if((point5-point1).norm()<edgeThreshold && (point0-point1).norm()<edgeThreshold && (point0-point5).norm()<edgeThreshold){
-				outFile << std::to_string(idx1) << " " << std::to_string(idx5) << " " << std::to_string(idx1)<< std::endl; 
-				}}
-			if(point5(0) != MINF && point6(0) != MINF && point1(0) != MINF ){
+				outFile << idx0 << " " << idx5 << " " << idx1<< std::endl;
+				}
 				if((point1-point5).norm()<edgeThreshold && (point5-point6).norm()<edgeThreshold && (point1-point6).norm()<edgeThreshold){
-				outFile << std::to_string(idx5) << " " <<std::to_string(idx1) << " " <<std::to_string(idx6) << std::endl; 
-			}}
+				outFile << idx5 << " " <<idx6 << " " <<idx1 << std::endl;
+			}
 		}
 	}
-
 	// close file
 	outFile.close();
 
@@ -177,17 +172,14 @@ int main()
 		
 		for(int y = 0; y < sensor.GetDepthImageHeight(); y++){
 			for(int x = 0; x < sensor.GetDepthImageWidth(); x++){			
-				int idx = y*sensor.GetColorImageWidth()+x; 
+				int idx = y*sensor.GetDepthImageWidth()+x; 
 				if(depthMap[idx] == MINF){
 					vertices[idx].position = Vector4f(MINF, MINF, MINF, MINF);
 					vertices[idx].color = Vector4uc(0,0,0,0);
 				}
 				else{
-					float x_shifted = (x-cX)/fX;
-					float y_shifted = (y-cY)/fY;
 					float z = depthMap[idx];
-
-					Vector3f dehomogenized(x_shifted*z, y_shifted*z, z);
+					Vector3f dehomogenized(x*z, y*z, z);
 					Vector3f multiplied_vectors = depthIntrinsicsInv * dehomogenized; 
 					vertices[idx].position = trajectoryInv * (depthExtrinsicsInv * Vector4f(multiplied_vectors(0),multiplied_vectors(1),multiplied_vectors(2), 1.0 ));
 					vertices[idx].color = Vector4uc(static_cast<float>(colorMap[idx*4]),static_cast<float>(colorMap[idx*4+1]),static_cast<float>(colorMap[idx*4+2]),static_cast<float>(colorMap[idx*4+3]));
