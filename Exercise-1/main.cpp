@@ -70,7 +70,7 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 	outFile << "# X Y Z R G B A" << std::endl;
 
 	for(int i = 0; i < width*height; i++){
-		if(vertices[i].position(0) != MINF){
+		if(vertices[i].position[0] != MINF && vertices[i].position[1] != MINF && vertices[i].position[2] != MINF){
 			outFile << vertices[i].position[0] << 
 			" " << vertices[i].position[1] <<
 			" " << vertices[i].position[2] << 
@@ -82,9 +82,9 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 			// std::cout <<  vertices[i].position(0) << " " << vertices[i].position(1) << " " << vertices[i].position(2) << " " << static_cast<float>(vertices[i].color(0)) << " " <<  static_cast<float>(vertices[i].color(1)) << " " <<  static_cast<float>(vertices[i].color(2)) << std::endl;
 		}
 		else{
-			outFile << 0 << 
-			" " << 0 <<
-			" " << 0 << 
+			outFile << 0.0f << 
+			" " << 0.0f <<
+			" " << 0.0f << 
 			" " << (int)(vertices[i].color[0]) << 
 			" " <<  (int)(vertices[i].color[1]) << 
 			" " <<  (int)(vertices[i].color[2]) << 
@@ -109,10 +109,10 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 			Vector4f point5 = vertices[idx5].position;
 			Vector4f point6 = vertices[idx6].position;
 				if((point5-point1).norm()<edgeThreshold && (point0-point1).norm()<edgeThreshold && (point0-point5).norm()<edgeThreshold){
-				outFile << idx0 << " " << idx5 << " " << idx1<< std::endl;
+				outFile << 3 << " " << idx0 << " " << idx5 << " " << idx1<< std::endl;
 				}
 				if((point1-point5).norm()<edgeThreshold && (point5-point6).norm()<edgeThreshold && (point1-point6).norm()<edgeThreshold){
-				outFile << idx5 << " " <<idx6 << " " <<idx1 << std::endl;
+				outFile << 3 << " " << idx5 << " " <<idx6 << " " <<idx1 << std::endl;
 			}
 		}
 	}
@@ -181,8 +181,9 @@ int main()
 					float z = depthMap[idx];
 					Vector3f dehomogenized(x*z, y*z, z);
 					Vector3f multiplied_vectors = depthIntrinsicsInv * dehomogenized; 
-					vertices[idx].position = trajectoryInv * (depthExtrinsicsInv * Vector4f(multiplied_vectors(0),multiplied_vectors(1),multiplied_vectors(2), 1.0 ));
-					vertices[idx].color = Vector4uc(static_cast<float>(colorMap[idx*4]),static_cast<float>(colorMap[idx*4+1]),static_cast<float>(colorMap[idx*4+2]),static_cast<float>(colorMap[idx*4+3]));
+					vertices[idx].position = trajectoryInv * (depthExtrinsicsInv * Vector4f(multiplied_vectors[0],multiplied_vectors[1],multiplied_vectors[2], 0.0 ));
+					vertices[idx].position[3] = 1.0f;
+					vertices[idx].color = Vector4uc((colorMap[idx*4]),(colorMap[idx*4+1]),(colorMap[idx*4+2]),(colorMap[idx*4+3]));
 
 				}
 			}
