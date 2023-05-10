@@ -272,7 +272,15 @@ public:
 		// the centers of the RBFs are the first m_numCenters sample points (use m_funcSamp.m_pos[i] to access them)
 		// hint: Eigen provides a norm() function to compute the l2-norm of a vector (e.g. see macro phi(i,j))
 		double result = 0.0;
-
+		
+		for(int i = 0; i < m_numCenters; i++){
+			result += m_coefficents[i] * this->EvalBasis((m_funcSamp.m_pos[i] - _x).norm());
+		}
+		
+		result += m_coefficents[m_numCenters] * _x[0];
+		result += m_coefficents[m_numCenters + 1] * _x[1];
+		result += m_coefficents[m_numCenters + 2] * _x[2];
+		result += m_coefficents[m_numCenters + 3];
 
 		return result;
 	}
