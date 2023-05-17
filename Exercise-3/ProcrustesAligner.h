@@ -22,7 +22,7 @@ public:
 		Matrix4f estimatedPose = Matrix4f::Identity();
 
 		estimatedPose.block(0,0,3,3) = rotation;
-		estimatedPose.block(3,0,1,3) = translation.transpose();
+		estimatedPose.block(0,3,3,1) = translation;
 
 		return estimatedPose;
 	}
@@ -48,20 +48,16 @@ private:
 		MatrixXf sourceMatrix(sourcePoints.size(), sourcePoints[0].size());
 		MatrixXf targetMatrix(targetPoints.size(), targetPoints[0].size());
 
-		// std::cout << sourceMatrix<< std::endl;
-		// std::cout << sourcePoints[0] << std::endl;
 	
-		for(int i = 0; i < sourcePoints.size(); i++){	
+		for(int i = 0; i < sourcePoints.size(); i++){		
 			sourceMatrix.block(i,0,1,sourcePoints[i].size()) = (sourcePoints[i].transpose() - sourceMean.transpose());
 			targetMatrix.block(i,0,1,targetPoints[i].size()) = (targetPoints[i].transpose() - targetMean.transpose());			
 		}
 
-		// std::cout << sourceMatrix << std::endl;
-		// std::cout << targetMatrix << std::endl;
 		
 		Matrix3f XTX = targetMatrix.transpose() * sourceMatrix; 
 		
-		JacobiSVD<Matrix3f, ComputeFullU | ComputeFullV> svd(XTX);
+		JacobiSVD<MatrixXf, ComputeFullU | ComputeFullV> svd(XTX);
 
 		Matrix3f rotation = svd.matrixU() * svd.matrixV().transpose();
 
@@ -74,7 +70,6 @@ private:
 			rotation = svd.matrixU() * antiMirror * svd.matrixV().transpose();
 		}
 
-		// std::cout << rotation <<std::endl;
 
         return rotation;
 	}
@@ -84,7 +79,6 @@ private:
 
 		Vector3f translation = Vector3f::Zero();
 		translation = - rotation * sourceMean + targetMean;
-		// std::cout << translation << std::endl;
         return translation;
 	}
 };
