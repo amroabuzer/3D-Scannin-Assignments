@@ -77,7 +77,6 @@ private:
 
 		Vector3f translation = Vector3f::Zero();
 		translation = - rotation * sourceMean + targetMean;
-		std::cout << translation << std::endl;
         return translation;
 	}
 };
