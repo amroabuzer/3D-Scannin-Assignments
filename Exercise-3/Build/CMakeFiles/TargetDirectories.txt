@@ -1,0 +1,3 @@
+/media/amr/Elements/Amr/3D-Scanning-and-Motion-Capture/Exercise-3/Build/CMakeFiles/rebuild_cache.dir
+/media/amr/Elements/Amr/3D-Scanning-and-Motion-Capture/Exercise-3/Build/CMakeFiles/edit_cache.dir
+/media/amr/Elements/Amr/3D-Scanning-and-Motion-Capture/Exercise-3/Build/CMakeFiles/exercise_3.dir
