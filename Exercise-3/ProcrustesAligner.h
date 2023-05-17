@@ -56,8 +56,8 @@ private:
 			targetMatrix.block(i,0,1,targetPoints[i].size()) = (targetPoints[i].transpose() - targetMean.transpose());			
 		}
 
-		std::cout << sourceMatrix << std::endl;
-		std::cout << targetMatrix << std::endl;
+		// std::cout << sourceMatrix << std::endl;
+		// std::cout << targetMatrix << std::endl;
 		
 		Matrix3f XTX = targetMatrix.transpose() * sourceMatrix; 
 		
@@ -74,7 +74,7 @@ private:
 			rotation = svd.matrixU() * antiMirror * svd.matrixV().transpose();
 		}
 
-		std::cout << rotation <<std::endl;
+		// std::cout << rotation <<std::endl;
 
         return rotation;
 	}
@@ -84,7 +84,7 @@ private:
 
 		Vector3f translation = Vector3f::Zero();
 		translation = - rotation * sourceMean + targetMean;
-		std::cout << translation << std::endl;
+		// std::cout << translation << std::endl;
         return translation;
 	}
 };
