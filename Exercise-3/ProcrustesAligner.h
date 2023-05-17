@@ -32,6 +32,7 @@ private:
 		for(int i = 0; i < points.size(); i++){
 			mean += points[i];
 		}
+
 		return (mean/points.size());
 	}
 
@@ -39,7 +40,13 @@ private:
 		// TODO: Estimate the rotation from source to target points, following the Procrustes algorithm.
 		// To compute the singular value decomposition you can use JacobiSVD() from Eigen.
 		// Hint: You can initialize an Eigen matrix with "MatrixXf m(num_rows,num_cols);" and access/modify parts of it using the .block() method (see above).
+		
+		MatrixXf sourceMatrix(sourcePoints.data());
+		MatrixXf targetMatrix(targetPoints.data());
+		
+		std::cout << sourceMatrix << std::endl;
 
+		// JacobiSVD<MatrixXf, ComputeFullU | ComputeFullV> svd(XTX)
 		Matrix3f rotation = Matrix3f::Identity(); 
         return rotation;
 	}
