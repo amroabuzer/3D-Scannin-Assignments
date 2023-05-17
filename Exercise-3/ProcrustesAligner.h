@@ -49,7 +49,7 @@ private:
 			targetMatrix.block(i,0,1,targetPoints[i].size()) = targetPoints[i];			
 		}
 		
-		Matrix3f XTX = sourceMatrix.transpose() * targetMatrix; 
+		Matrix3f XTX = targetMatrix.transpose() * sourceMatrix; 
 		
 		JacobiSVD<MatrixXf, ComputeFullU | ComputeFullV> svd(XTX);
 
@@ -71,6 +71,7 @@ private:
 		// TODO: Compute the translation vector from source to target points.
 
 		Vector3f translation = Vector3f::Zero();
+		translation = - rotation * sourceMean + targetMean;
         return translation;
 	}
 };
