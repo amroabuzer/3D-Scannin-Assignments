@@ -20,6 +20,10 @@ public:
 		// You can access parts of the matrix with .block(start_row, start_col, num_rows, num_cols) = elements
 		
 		Matrix4f estimatedPose = Matrix4f::Identity();
+
+		estimatedPose.block(0,0,3,3) = rotation;
+		estimatedPose.block(3,0,1,3) = translation.transpose();
+
 		return estimatedPose;
 	}
 
