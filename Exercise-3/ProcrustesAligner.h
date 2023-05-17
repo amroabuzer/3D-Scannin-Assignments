@@ -41,13 +41,29 @@ private:
 		// To compute the singular value decomposition you can use JacobiSVD() from Eigen.
 		// Hint: You can initialize an Eigen matrix with "MatrixXf m(num_rows,num_cols);" and access/modify parts of it using the .block() method (see above).
 		
-		MatrixXf sourceMatrix(sourcePoints.data());
-		MatrixXf targetMatrix(targetPoints.data());
+		MatrixXf sourceMatrix(sourcePoints.size(), sourcePoints[0].size());
+		MatrixXf targetMatrix(targetPoints.size(), targetPoints[0].size());
+	
+		for(int i = 0; i < sourcePoints.size(); i++){
+			sourceMatrix.block(i,0,1,sourcePoints[i].size()) = sourcePoints[i];
+			targetMatrix.block(i,0,1,targetPoints[i].size()) = targetPoints[i];			
+		}
 		
-		std::cout << sourceMatrix << std::endl;
+		Matrix3f XTX = sourceMatrix.transpose() * targetMatrix; 
+		
+		JacobiSVD<MatrixXf, ComputeFullU | ComputeFullV> svd(XTX);
 
-		// JacobiSVD<MatrixXf, ComputeFullU | ComputeFullV> svd(XTX)
-		Matrix3f rotation = Matrix3f::Identity(); 
+		Matrix3f rotation = svd.matrixU() * svd.matrixV().transpose();
+
+		if (rotation.determinant() == -1){
+			Matrix3f antiMirror;
+			antiMirror << 1, 0, 0,
+						  0, 1, 0,
+						  0, 0, -1;
+
+			rotation = svd.matrixU() * antiMirror * svd.matrixV().transpose();
+		}
+
         return rotation;
 	}
 
