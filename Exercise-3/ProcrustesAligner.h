@@ -53,11 +53,10 @@ private:
 			sourceMatrix.block(i,0,1,sourcePoints[i].size()) = (sourcePoints[i].transpose() - sourceMean.transpose());
 			targetMatrix.block(i,0,1,targetPoints[i].size()) = (targetPoints[i].transpose() - targetMean.transpose());			
 		}
-
 		
 		Matrix3f XTX = targetMatrix.transpose() * sourceMatrix; 
 		
-		JacobiSVD<MatrixXf, ComputeFullU | ComputeFullV> svd(XTX);
+		JacobiSVD<Matrix3f, ComputeFullU | ComputeFullV> svd(XTX);
 
 		Matrix3f rotation = svd.matrixU() * svd.matrixV().transpose();
 
@@ -70,7 +69,6 @@ private:
 			rotation = svd.matrixU() * antiMirror * svd.matrixV().transpose();
 		}
 
-
         return rotation;
 	}
 
@@ -79,6 +77,7 @@ private:
 
 		Vector3f translation = Vector3f::Zero();
 		translation = - rotation * sourceMean + targetMean;
+		std::cout << translation << std::endl;
         return translation;
 	}
 };
