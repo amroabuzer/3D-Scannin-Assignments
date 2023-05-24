@@ -2,13 +2,30 @@
 #include "utils/points.h"
 
 #include "ceres/ceres.h"
+// #include "Eigen.h"
+
 #include <math.h>
 
 
 // TODO: Implement the cost function (check gaussian.cpp for reference)
 struct RegistrationCostFunction
 {
+	RegistrationCostFunction(const Point2D& p_points , const Point2D& q_points, const Weight& weights)
+		: p_point(p_points), q_point(q_points), weight(weights)
+	{
 
+	}
+
+	template<typename T>
+	bool operator()(const T*  const theta, const T* const t_x, const T* const t_y, T* residual) const
+	{
+		residual[0] = weight.w * pow(cos(theta[0]) * p_point.x - sin(theta[0]) * p_point.y + t_x[0] - q_point.x,2 ) + pow(sin(theta[0]) * p_point.x + cos(theta[0]) * p_point.y + t_y[0] -q_point.y,2);
+		return true;
+	}
+	private:
+		const Point2D p_point;
+		const Point2D q_point;
+		const Weight weight;
 };
 
 
@@ -37,6 +54,16 @@ int main(int argc, char** argv)
 	ceres::Problem problem;
 
 	// TODO: For each weighted correspondence create one residual block (check gaussian.cpp for reference)
+	for (int i = 0; i < points1.size(); i++)
+	{
+		problem.AddResidualBlock(
+			new ceres::AutoDiffCostFunction<RegistrationCostFunction,1,1,1,1>(
+				new RegistrationCostFunction(points1[i],points2[i],weights[i])
+			),
+			nullptr, &angle, &tx, &ty 
+		);
+	}
+
 
 	ceres::Solver::Options options;
 	options.max_num_iterations = 25;
